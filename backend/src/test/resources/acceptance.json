@@ -1,0 +1,158 @@
+[
+  {
+    "op": "create",
+    "as": "procedure",
+    "module": "procedures",
+    "data": {
+      "name": "入库质检作业",
+      "versionName": "V1",
+      "area": "收货区",
+      "steps": "登记;核验;复核",
+      "criticalSteps": "核验"
+    }
+  },
+  {
+    "op": "create",
+    "as": "earlyRun",
+    "module": "runs",
+    "data": {
+      "procedure": "$procedure.id",
+      "performedAt": "$today",
+      "operatorName": "操作员甲",
+      "completedSteps": "登记;复核",
+      "observation": "待核验"
+    },
+    "error": 409
+  },
+  {
+    "op": "action",
+    "target": "procedure",
+    "action": "publish",
+    "data": {},
+    "role": "reviewer"
+  },
+  {
+    "op": "create",
+    "as": "run",
+    "module": "runs",
+    "data": {
+      "procedure": "$procedure.id",
+      "performedAt": "$today",
+      "operatorName": "操作员甲",
+      "completedSteps": "登记;复核",
+      "observation": "发现漏做核验"
+    }
+  },
+  {
+    "op": "action",
+    "target": "run",
+    "action": "analyze",
+    "data": {}
+  },
+  {
+    "op": "check",
+    "target": "run",
+    "expect": {
+      "state": "DEVIATION",
+      "data.lastOutcome": "DEVIATION",
+      "data.criticalMissing": [
+        "核验"
+      ]
+    }
+  },
+  {
+    "op": "count",
+    "module": "deviations",
+    "count": 1
+  },
+  {
+    "op": "find",
+    "as": "deviation",
+    "module": "deviations",
+    "where": {
+      "data.run": "$run.id"
+    }
+  },
+  {
+    "op": "action",
+    "target": "run",
+    "action": "finalize",
+    "data": {},
+    "role": "reviewer",
+    "error": 409
+  },
+  {
+    "op": "action",
+    "target": "run",
+    "action": "correct",
+    "data": {
+      "completedSteps": "登记;核验;复核",
+      "correctiveAction": "补做核验并记录"
+    }
+  },
+  {
+    "op": "action",
+    "target": "run",
+    "action": "finalize",
+    "data": {},
+    "role": "reviewer",
+    "error": 409
+  },
+  {
+    "op": "action",
+    "target": "run",
+    "action": "analyze",
+    "data": {}
+  },
+  {
+    "op": "check",
+    "target": "run",
+    "expect": {
+      "state": "COMPLIANT",
+      "data.lastOutcome": "COMPLIANT"
+    }
+  },
+  {
+    "op": "check",
+    "target": "deviation",
+    "expect": {
+      "state": "RESOLVED"
+    }
+  },
+  {
+    "op": "action",
+    "target": "run",
+    "action": "finalize",
+    "data": {},
+    "role": "reviewer"
+  },
+  {
+    "op": "check",
+    "target": "run",
+    "expect": {
+      "state": "CLOSED"
+    }
+  },
+  {
+    "op": "action",
+    "target": "procedure",
+    "action": "retire",
+    "data": {
+      "reason": "新版本替代"
+    },
+    "role": "reviewer"
+  },
+  {
+    "op": "count",
+    "module": "checks",
+    "count": 2
+  },
+  {
+    "op": "metric",
+    "expect": {
+      "有效指导书": 0,
+      "待整改执行": 0,
+      "已归档执行": 1
+    }
+  }
+]

@@ -1,0 +1,240 @@
+{
+  "slug": "sopai",
+  "name": "知华SOP执行核验",
+  "subtitle": "指导书版本、现场步骤核验、偏差整改与签核",
+  "accent": "#78604f",
+  "modules": [
+    {
+      "key": "procedures",
+      "label": "作业指导书",
+      "description": "维护标准步骤与关键步骤；发布后锁定版本",
+      "initial": "DRAFT",
+      "editable": true,
+      "creatable": true,
+      "fields": [
+        {
+          "key": "name",
+          "label": "指导书名称",
+          "type": "text",
+          "required": true,
+          "ref": null,
+          "options": [],
+          "min": null,
+          "max": null
+        },
+        {
+          "key": "versionName",
+          "label": "版本号",
+          "type": "text",
+          "required": true,
+          "ref": null,
+          "options": [],
+          "min": null,
+          "max": null
+        },
+        {
+          "key": "area",
+          "label": "适用区域",
+          "type": "text",
+          "required": true,
+          "ref": null,
+          "options": [],
+          "min": null,
+          "max": null
+        },
+        {
+          "key": "steps",
+          "label": "标准步骤（分号分隔）",
+          "type": "text",
+          "required": true,
+          "ref": null,
+          "options": [],
+          "min": null,
+          "max": null
+        },
+        {
+          "key": "criticalSteps",
+          "label": "关键步骤（分号分隔）",
+          "type": "text",
+          "required": true,
+          "ref": null,
+          "options": [],
+          "min": null,
+          "max": null
+        }
+      ],
+      "actions": [
+        {
+          "key": "publish",
+          "label": "审核发布",
+          "from": [
+            "DRAFT"
+          ],
+          "to": "PUBLISHED",
+          "role": "REVIEWER",
+          "separate": true,
+          "fields": []
+        },
+        {
+          "key": "retire",
+          "label": "停用版本",
+          "from": [
+            "PUBLISHED"
+          ],
+          "to": "RETIRED",
+          "role": "REVIEWER",
+          "separate": true,
+          "fields": [
+            {
+              "key": "reason",
+              "label": "停用原因",
+              "type": "text",
+              "required": true,
+              "ref": null,
+              "options": [],
+              "min": null,
+              "max": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "runs",
+      "label": "执行记录",
+      "description": "记录完成步骤、核验偏差和整改复核",
+      "initial": "OPEN",
+      "editable": true,
+      "creatable": true,
+      "fields": [
+        {
+          "key": "procedure",
+          "label": "指导书",
+          "type": "ref",
+          "required": true,
+          "ref": "procedures",
+          "options": [],
+          "min": null,
+          "max": null
+        },
+        {
+          "key": "performedAt",
+          "label": "执行日期",
+          "type": "date",
+          "required": true,
+          "ref": null,
+          "options": [],
+          "min": null,
+          "max": null
+        },
+        {
+          "key": "operatorName",
+          "label": "执行人员",
+          "type": "text",
+          "required": true,
+          "ref": null,
+          "options": [],
+          "min": null,
+          "max": null
+        },
+        {
+          "key": "completedSteps",
+          "label": "已完成步骤（分号分隔）",
+          "type": "text",
+          "required": true,
+          "ref": null,
+          "options": [],
+          "min": null,
+          "max": null
+        },
+        {
+          "key": "observation",
+          "label": "现场观察",
+          "type": "text",
+          "required": true,
+          "ref": null,
+          "options": [],
+          "min": null,
+          "max": null
+        }
+      ],
+      "actions": [
+        {
+          "key": "analyze",
+          "label": "核验步骤",
+          "from": [
+            "OPEN",
+            "CORRECTED"
+          ],
+          "to": "COMPLIANT",
+          "role": "OPERATOR",
+          "separate": false,
+          "fields": []
+        },
+        {
+          "key": "correct",
+          "label": "提交整改",
+          "from": [
+            "DEVIATION"
+          ],
+          "to": "CORRECTED",
+          "role": "OPERATOR",
+          "separate": false,
+          "fields": [
+            {
+              "key": "completedSteps",
+              "label": "整改后已完成步骤",
+              "type": "text",
+              "required": true,
+              "ref": null,
+              "options": [],
+              "min": null,
+              "max": null
+            },
+            {
+              "key": "correctiveAction",
+              "label": "整改措施",
+              "type": "text",
+              "required": true,
+              "ref": null,
+              "options": [],
+              "min": null,
+              "max": null
+            }
+          ]
+        },
+        {
+          "key": "finalize",
+          "label": "审核归档",
+          "from": [
+            "COMPLIANT"
+          ],
+          "to": "CLOSED",
+          "role": "REVIEWER",
+          "separate": true,
+          "fields": []
+        }
+      ]
+    },
+    {
+      "key": "checks",
+      "label": "核验流水",
+      "description": "保留每轮核验结果和缺失步骤",
+      "initial": "RECORDED",
+      "editable": false,
+      "creatable": false,
+      "fields": [],
+      "actions": []
+    },
+    {
+      "key": "deviations",
+      "label": "偏差台账",
+      "description": "保留缺失关键步骤及风险等级",
+      "initial": "OPEN",
+      "editable": false,
+      "creatable": false,
+      "fields": [],
+      "actions": []
+    }
+  ]
+}
