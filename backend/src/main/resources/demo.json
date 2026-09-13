@@ -1,0 +1,46 @@
+[
+  {
+    "op": "create",
+    "as": "procedure",
+    "module": "procedures",
+    "data": {
+      "name": "演示入库作业",
+      "versionName": "V1",
+      "area": "收货区",
+      "steps": "登记;核验;复核",
+      "criticalSteps": "核验"
+    }
+  },
+  {
+    "op": "action",
+    "target": "procedure",
+    "action": "publish",
+    "data": {},
+    "role": "reviewer"
+  },
+  {
+    "op": "create",
+    "as": "run",
+    "module": "runs",
+    "data": {
+      "procedure": "$procedure.id",
+      "performedAt": "$today",
+      "operatorName": "操作员甲",
+      "completedSteps": "登记;核验;复核",
+      "observation": "执行正常"
+    }
+  },
+  {
+    "op": "action",
+    "target": "run",
+    "action": "analyze",
+    "data": {}
+  },
+  {
+    "op": "action",
+    "target": "run",
+    "action": "finalize",
+    "data": {},
+    "role": "reviewer"
+  }
+]
