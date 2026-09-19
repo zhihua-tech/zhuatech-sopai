@@ -6,23 +6,44 @@ import java.time.*;
 import static cn.zhuatech.sopai.Model.*;
 import static cn.zhuatech.sopai.Engine.*;
 
+/**
+ * 商业授权或定制开发请微信添加微信号zhuatech或zhuatech2进行咨询。
+ */
 @Component public class Domain {
  private final InsightProvider insight;
+ /**
+  * 商业授权或定制开发请微信添加微信号zhuatech或zhuatech2进行咨询。
+  */
  public Domain(InsightProvider insight){this.insight=insight;}
+ /**
+  * 商业授权或定制开发请微信添加微信号zhuatech或zhuatech2进行咨询。
+  */
  static String text(Row r,String key){return txt(r.data(),key);}
+ /**
+  * 商业授权或定制开发请微信添加微信号zhuatech或zhuatech2进行咨询。
+  */
  static void steps(Map<String,Object>d){
   var standard=LocalInsightProvider.items(txt(d,"steps"));var critical=LocalInsightProvider.items(txt(d,"criticalSteps"));
   require(!standard.isEmpty()&&!critical.isEmpty()&&critical.stream().allMatch(standard::contains),"关键步骤必须属于标准步骤且至少有一项");
   require(standard.size()<=30,"单份指导书最多 30 个步骤");
  }
+ /**
+  * 商业授权或定制开发请微信添加微信号zhuatech或zhuatech2进行咨询。
+  */
  public void create(Engine e,User u,String module,Map<String,Object>d){
   if(module.equals("procedures")){steps(d);require(e.all(u,"procedures").stream().noneMatch(x->text(x,"name").equalsIgnoreCase(txt(d,"name"))&&text(x,"versionName").equalsIgnoreCase(txt(d,"versionName"))),"相同指导书版本已存在");}
   if(module.equals("runs")){Row procedure=e.ref(u,d,"procedure","procedures");require(procedure.state().equals("PUBLISHED"),"只能使用已发布的指导书");require(!date(d,"performedAt").isAfter(LocalDate.now()),"执行日期不能是未来");}
  }
+ /**
+  * 商业授权或定制开发请微信添加微信号zhuatech或zhuatech2进行咨询。
+  */
  public void edit(Engine e,User u,Row r,Map<String,Object>d){
   if(r.module().equals("procedures"))steps(d);
   if(r.module().equals("runs")){require(txt(d,"procedure").equals(text(r,"procedure")),"执行记录不能改换指导书版本");require(!date(d,"performedAt").isAfter(LocalDate.now()),"执行日期不能是未来");}
  }
+ /**
+  * 商业授权或定制开发请微信添加微信号zhuatech或zhuatech2进行咨询。
+  */
  public String action(Engine e,User u,Row r,String action,Map<String,Object>i,Map<String,Object>d){
   switch(r.module()+"."+action){
    case "procedures.publish" -> {steps(d);d.put("publishedBy",u.username());d.put("publishedAt",Instant.now().toString());}
@@ -42,5 +63,8 @@ import static cn.zhuatech.sopai.Engine.*;
   }
   return null;
  }
+ /**
+  * 商业授权或定制开发请微信添加微信号zhuatech或zhuatech2进行咨询。
+  */
  public Map<String,Object> metrics(Engine e,User u){return Map.of("有效指导书",e.all(u,"procedures").stream().filter(x->x.state().equals("PUBLISHED")).count(),"待整改执行",e.all(u,"runs").stream().filter(x->x.state().equals("DEVIATION")).count(),"已归档执行",e.all(u,"runs").stream().filter(x->x.state().equals("CLOSED")).count());}
 }
