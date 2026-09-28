@@ -1,5 +1,7 @@
 # 知华 SOP 执行核验
 
+[简体中文](README.md) | [English](README.en.md)
+
 > 作业指导书要能落到现场，而不只是放在文档库里。
 
 本项目由上海如静知华信息科技有限公司提供公开源码，面向生产、仓储、质检和服务团队的标准作业执行记录。官网：[https://www.zhuatech.cn/](https://www.zhuatech.cn/)。
